@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+{% load static %} 
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+            {% if user.is_authenticated %}
+                {{user.username}}
+               <a href="{% url 'blog:logout' %}">logout</a>
+            {%else%}
+            <a href="{% url 'blog:login' %}">login</a>
+            <a href="{% url 'blog:signup' %}">register</a>
+            {% endif %}
+    {% block content %}
+            
+            {% for post in posts %}
+                <p>{{post.contet}}</p>
+                <p>{{post.title}}</p>
+                <img style="width:20px; height:20px" src="{{ post.image.url }}" >
+            {% endfor %}
+            
+    {% endblock content %}
+</body>
+</html>
