@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+{% include 'includes/navbar.html' %}
+{% block content %}
+    
+    {% for w in user %}
+      {{w.username}}
+     
+      {{w.likeuser.count}}
+
+        {{w.related_name.}}
+        <p>
+        you liked:{%for x in likes %}
+          {{x.post}}
+          {% endfor %}
+      </p>
+      
+    
+        {% if edit %}
+          <a href="{% url 'blog:edituser' w.id %}">edit</a>
+        {% endif %}
+      
+      {% endfor %} 
+      {% for post in posts %}
+        {{post}}
+      {% endfor %}
+
+{% endblock  %}

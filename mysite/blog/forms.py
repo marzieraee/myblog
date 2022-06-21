@@ -3,7 +3,7 @@ from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 
 
-from blog.models import MyPost
+from blog.models import MyPost ,Comment 
 
 
 
@@ -36,5 +36,20 @@ class AuthForm(forms.Form):
     password = forms.CharField(max_length=255)
 
     
-    
+class CommentForm(forms.ModelForm):
         
+    class Meta:
+        model = Comment
+        fields = ('body',)
+        
+        
+# class LikeForm(forms.ModelForm):
+#     class Meta:
+        
+#         model= Like
+#         fields = ('likes',)
+    
+# class EditPostForm(forms.ModelForm):
+#     class Meta:
+#         model= MyPost
+#         feilds = ('title','image','contet',)
