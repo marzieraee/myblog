@@ -181,15 +181,19 @@ class detailPost(View):
     template_name='detail.html'
         
     def get(self, request,*args, **kwargs):
-        posts= MyPost.objects.filter(id=kwargs.get('id'))
-        post = MyPost.objects.get(id=kwargs.get('id'))
+        posts= MyPost.objects.filter(pk=kwargs.get('id'))
+        post = MyPost.objects.get(pk=kwargs.get('id'))
         comments=Comment.objects.filter(post_id=kwargs.get('id'))
         form=self.form_class()
-        if request.user==post.author:
-            edit=''
+        if request.user == post.author:
+            edit=True
         else:
             edit= False
-        context={'edit':edit,'posts': posts,'comments':comments,'comment':form}
+        context={
+            'edit':edit,
+            'posts': posts,
+            'comments':comments,
+            'comment':form}
         return render(request,self.template_name,context)
     
     def post(self, request,*args, **kwargs):
@@ -207,7 +211,7 @@ class detailPost(View):
                 
                 edit=''
             else:
-                edit= None
+                edit= False
         else:
             print('not valid')
             
@@ -216,7 +220,7 @@ class detailPost(View):
             
             'comment':form ,
             'post':post,
-            'edit':edit
+            'edit':edit,
             }
                 
         return render(request,self.template_name,context)
@@ -351,22 +355,28 @@ class ProfileView(View):
 class EditPostView(View):
     form_class= PostGetForm
     template_name ='editpost.html'
-    def post(self, request,*args, **kwargs):
-        post=get_object_or_404(MyPost, pk=kwargs.get('id'))
-        if request.user==post.author:  
-            form=PostGetForm(request.POST,instance=post)
-            if form.is_valid():
-                form.save()
-                return redirect('/')
-            
-            return render(request,self.template_name,{'form':form}) 
-        
+
+    
     def get(self, request,*args, **kwargs):
+        
         post=MyPost.objects.get(pk=kwargs.get('id'))
         if request.user==post.author:  
             form=self.form_class(instance=post)
         
-        return render(request,self.template_name,{'form':form})  
+        return render(request,self.template_name,{'form':form}) 
+    
+    def post(self, request,*args, **kwargs):
+        post=get_object_or_404(MyPost, pk=kwargs.get('id'))
+        if request.user == post.author:  
+            form=PostGetForm(request.POST,instance=post)
+            if form.is_valid():
+                form.save()
+                return redirect('/')
+        else :
+            return redirect('/')    
+        return render(request,self.template_name,{'form':form}) 
+        
+     
 
 
     
@@ -405,22 +415,49 @@ class EditPostView(View):
         
 #     return render(request,'editpost.html',{'form':form})
 
+class EditUserView(View):
+    form_class= CreatUser
+    template_name ='edituser.html'
 
-
-@login_required
-def edit_user(request,id):
-    user=User.objects.get(id=id)
-    if request.user==user:
-        if request.method =='POST':
-            
-            form=CreatUser(request.POST,instance=user)
+    def post(self, request,*args, **kwargs):
+        user=User.objects.get(pk=kwargs.get('id'))
+        if request.user==user:
+            form=self.form_class(request.POST,instance=user)
             if form.is_valid():
-                form.save()
+                form.save(commit=False)
                 return redirect('/')
-        
         else:
-            form=CreatUser(instance=user)
-    else:
-        return redirect('/')    
+            return redirect('/')    
+        return render(request,self.template_name,{'form':form}) 
+        
+    def get(self, request,*args, **kwargs):
+        user=User.objects.get(pk=kwargs.get('id'))
+        if request.user==user:  
+            form=self.form_class(instance=user)
+        return render(request,self.template_name,{'form':form})  
+
+
+
+
+
+
+
+# @login_required
+
+
+# def edit_user(request,id):
+#     user=User.objects.get(id=id)
+#     if request.user==user:
+#         if request.method =='POST':
+            
+#             form=CreatUser(request.POST,instance=user)
+#             if form.is_valid():
+#                 form.save()
+#                 return redirect('/')
+        
+#         else:
+#             form=CreatUser(instance=user)
+#     else:
+#         return redirect('/')    
     
-    return render(request,'edituser.html',{'form':form})
+#     return render(request,'edituser.html',{'form':form})

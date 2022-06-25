@@ -14,7 +14,7 @@ urlpatterns = [
    path('like/<int:id>/', views.likeView.as_view(), name='like'),
    path("profile/<int:id>/",views.ProfileView.as_view(),name='profile'),
    path("editpost/<int:id>/", views.EditPostView.as_view(), name='editpost'),
-   path("edituser/<int:id>/", views.edit_user, name='edituser'),
+   path("edituser/<int:id>/", views.EditUserView.as_view(), name='edituser'),
 
  ]
 

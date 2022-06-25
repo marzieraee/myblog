@@ -42,10 +42,14 @@
         <button type='submit' name='like' value="{{ post.id }}" >Like</button>
     </form>
     <p>likes={{feature.likes}}</p>
+    
 
 
     {% if edit %}
-    <a href="{% url 'blog:editpost' feature.id %}">edit</a>
+        <a href="{% url 'blog:editpost' feature.id %}">edit</a>
+    
+        
+
     {% endif %}
     
 {% endfor %}
