@@ -15,15 +15,37 @@
         {% include 'includes/navbar.html' %}
         
        <a href="{% url 'blog:getpost' %}"> <button>post bell</button></a>
-    {% for post  in posts %}
+    {% for post  in page_obj %}
     
                 
     <a href="{% url 'blog:detial' post.id %}"> 
         <p>{{post.title}}</p></a>
         
      <a href="{% url 'blog:profile' post.author.id %}">{{post.author}}</a>
+
+
+     
     
-    {% endfor %}            
+    
+    {% endfor %}   
+    
+    <div class="pagination">
+        <span class="step-links">
+            {% if page_obj.has_previous %}
+                <a href="?page=1">&laquo; first</a>
+                <a href="?page={{ page_obj.previous_page_number }}">previous</a>
+            {% endif %}
+    
+            <span class="current">
+                Page {{ page_obj.number }} of <a href="?page={{ page_obj.paginator.num_pages }}">{{ page_obj.paginator.num_pages }}</a>.
+            </span>
+    
+            {% if page_obj.has_next %}
+                <a href="?page={{ page_obj.next_page_number }}">next</a>
+                <a href="?page={{ page_obj.paginator.num_pages }}">last &raquo;</a>
+            {% endif %}
+        </span>
+    </div>
             
     {% endblock content %}
 </body>
