@@ -4,30 +4,35 @@
 
 
    
-    {% for feature in posts %}
+{% for feature in posts %}
    
     
 
          {{feature.contet}}<br>
         <img src='{{feature.image}}'>
         {{feature.created_date}}
-       <p>{% for com in comments  %}
+         {% for com in comments  %}
             {{com.body}}
             
             {{com.commenter}}
             {{com.created_on}}
 
-    {% endfor %} 
+          {% endfor %} 
  
            
           
         
-    <form   method='POST' >
-        {% csrf_token %}
-        {{comment}}
-        <button>sabt</button>
-    </form>
-       
+          
+        
+            <form  action="" method='POST' >
+                {% csrf_token %}
+                {{comment}}
+                    
+                <button>sabt</button>
+            </form>
+            
+
+        
         
 
   
@@ -37,9 +42,12 @@
         <button type='submit' name='like' value="{{ post.id }}" >Like</button>
     </form>
     <p>likes={{feature.likes}}</p>
+
+
     {% if edit %}
     <a href="{% url 'blog:editpost' feature.id %}">edit</a>
     {% endif %}
+    
 {% endfor %}
 
 {% endblock  %}
