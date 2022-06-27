@@ -1,4 +1,4 @@
-
+from django.db.models import Q
 from django.core.paginator import Paginator
 from django.shortcuts import get_object_or_404, render,redirect
 from django.contrib.auth import authenticate, login , logout
@@ -16,9 +16,11 @@ from .forms import PostGetForm ,CreatUser ,AuthForm,CommentForm
 class LoginView(View):
     form_class= AuthForm
     template_name ='login.html'
+    
     def get(self,request):
         form=self.form_class()
         return render(request,self.template_name,{'form':form})
+    
     def post(self,request):
         form=self.form_class(request.POST)
         if form.is_valid():
@@ -72,9 +74,11 @@ class LogoutView(View):
 class SignupView(View):
     form_class= CreatUser
     template_name ='signup.html'
+    
     def get(self,request):
         form=self.form_class()
         return render(request,self.template_name,{'form':form})  
+    
     def post(self,request):
         form=self.form_class(request.POST)
         if form.is_valid():
@@ -113,10 +117,11 @@ class HomeView(View):
     template_name='base.html'
     
     def get(self,request):
-        posts_list=MyPost.objects.all() 
-        
+        posts_list=MyPost.objects.all()
+        if request.GET.get('search'):
+            posts_list=posts_list.filter(Q(title__icontains=request.GET.get('search')) )
+            
         paginator = Paginator(posts_list, 1) # Show 3 contacts per page.
-
         page_number = request.GET.get('page')
         page_obj = paginator.get_page(page_number)
         context={
@@ -147,17 +152,15 @@ class CreatPostView(View):
     def get(self,request):
         form=self.form_class()
         return render(request,self.template_name,{'form':form})  
+    
     def post(self,request):
         form=self.form_class(request.POST)
         if form.is_valid():
-           if form.is_valid():
-            # forms=form.cleaned_data
+            # TODO use commit=false
             form.instance.author = request.user
-            print(form)
             MyPost.objects.create
             form.save()
-           return redirect('blog:showpost')
-        
+            return redirect('blog:showpost')
             
         return render(request,self.template_name,{'form':form})
  
@@ -185,11 +188,11 @@ class CreatPostView(View):
 
 
 class detailPost(View):
-
     form_class= CommentForm
     template_name='detail.html'
         
     def get(self, request,*args, **kwargs):
+        #TODO CLEAN CODE
         posts= MyPost.objects.filter(pk=kwargs.get('id'))
         post = MyPost.objects.get(pk=kwargs.get('id'))
         comments=Comment.objects.filter(post_id=kwargs.get('id'))
@@ -427,6 +430,14 @@ class EditPostView(View):
 class EditUserView(View):
     form_class= CreatUser
     template_name ='edituser.html'
+    
+    
+    
+    def get(self, request,*args, **kwargs):
+        user=User.objects.get(pk=kwargs.get('id'))
+        if request.user==user:  
+            form=self.form_class(instance=user)
+        return render(request,self.template_name,{'form':form})
 
     def post(self, request,*args, **kwargs):
         user=User.objects.get(pk=kwargs.get('id'))
@@ -439,11 +450,7 @@ class EditUserView(View):
             return redirect('/')    
         return render(request,self.template_name,{'form':form}) 
         
-    def get(self, request,*args, **kwargs):
-        user=User.objects.get(pk=kwargs.get('id'))
-        if request.user==user:  
-            form=self.form_class(instance=user)
-        return render(request,self.template_name,{'form':form})  
+      
 
 
 
@@ -470,3 +477,7 @@ class EditUserView(View):
 #         return redirect('/')    
     
 #     return render(request,'edituser.html',{'form':form})
+
+
+
+

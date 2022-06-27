@@ -28,7 +28,11 @@
     
     
     {% endfor %}   
-    
+    <form action="" method="get">
+        <p> title:<input type="text" name='search'>
+            
+        <br><button>ok</button></p>
+    </form>
     <div class="pagination">
         <span class="step-links">
             {% if page_obj.has_previous %}
